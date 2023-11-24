@@ -1,5 +1,8 @@
 "use client";
 
+//react 
+import { useState } from "react";
+
 //zod
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,10 +11,12 @@ import { useForm } from "react-hook-form";
 //next router
 import { useRouter } from "next/navigation";
   
-//shadcn components
+//shadcn 
 import { Form,FormControl,FormDescription,FormField,FormItem,FormLabel,FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast"
+
 
 //markdown editor
 import SimpleMDE from "react-simplemde-editor";
@@ -19,6 +24,7 @@ import "easymde/dist/easymde.min.css";
 
 //Axios
 import axios from "axios";
+
 
 
 const formSchema = z.object({
@@ -33,6 +39,9 @@ const formSchema = z.object({
 
 export default function NewIssuePage() {
   const router = useRouter();
+  const [error, setError] = useState('')
+  const { toast } = useToast()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,8 +51,16 @@ export default function NewIssuePage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-      await axios.post('/api/issues', values)
+    try {
+      await axios.post('/api/issue', values)
       router.push('/issues');
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      })
+    }
   }
 
   return (
