@@ -52,7 +52,7 @@ export default function NewIssuePage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await axios.post('/api/issue', values)
+      await axios.post('/api/issues', values)
       router.push('/issues');
     } catch (error) {
       toast({
